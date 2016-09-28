@@ -3,13 +3,16 @@ package assignment3;
 import java.util.ArrayList;
 
 public class Node{
-	ArrayList<String> list = new ArrayList<String>();
+	ArrayList<String> list = new ArrayList<String>();	//this will hold the whole string array for each word
 	boolean visited = false;
 	String word;
 	String parent = null;
-	
-	public void add(ArrayList<String> x){
+	public void setWord(String w){
+		word = w;
 		
+	}
+	public void add(){
+		list.add(word);
 	}
 
 }
