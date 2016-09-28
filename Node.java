@@ -7,6 +7,7 @@ public class Node{
 	boolean visited = false;
 	String word;
 	String parent = null;
+	
 	public void add(ArrayList<String> x){
 		
 	}
