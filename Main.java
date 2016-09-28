@@ -66,8 +66,18 @@ public class Main {
 	}
 	 public static ArrayList<String> getWordLadderBFS(String start, String end) {
 		// TODO some code 
-		 Queue q;
+		Queue q = null;
+		Node n = new Node();
+		q.add(n);
+		String word = null;
 		Set<String> dict = makeDictionary();
+		// something something fill queue
+		while(!q.isEmpty()){
+			// more somethings
+			if(word.equals(end)){
+				//
+			}
+		}
 		// TODO more code
 		return null; // replace this line later with real return
 		}    
