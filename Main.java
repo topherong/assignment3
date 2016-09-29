@@ -1,12 +1,12 @@
 /* WORD LADDER Main.java  * EE422C Project 3 submission by 
  * Replace <...> with your actual data.
- * <Student1 Name>  * <Student1 EID>
- * <Student1 5-digit Unique No.>  
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * <Christopher Ong>  * <cio247>
+ * <16450>  
+ * <Mina Sucur>
+ * <ms64973>
+ * <16450>
  * Slip days used: <0>
- * Git URL:
+ * Git URL: https://github.com/topherong/assignment3
  * Fall 2016  */
 package assignment3;
 import java.util.*; 
@@ -33,13 +33,15 @@ public class Main {
 	} 
 	initialize();
 	ArrayList<String> input = parse(kb);
+	if(input.size() == 0){
+		return;
+	}
 	String starting = input.get(0);
 	String ending = input.get(1);
 	ArrayList<String> x = getWordLadderBFS(starting, ending);
-	ArrayList<String> y = getWordLadderDFS(starting, ending);
 	printLadder(x);
+	ArrayList<String> y = getWordLadderDFS(starting, ending);
 	printLadder(y);
-	initialize();
 	// TODO methods to read in words, output ladder
 	} 
 	public static void initialize() {
@@ -58,7 +60,8 @@ public class Main {
 		ArrayList<String> arrayList = new ArrayList<String>();
 		String s = keyboard.nextLine();
 		if(s.equals("/quit")){
-			//QUIT
+			ArrayList<String> empty = new ArrayList<String>();
+			return empty;
 		}
 		array = s.split("\\s+");
 		for(int i = 0; i < array.length; i++){
