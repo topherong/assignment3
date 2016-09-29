@@ -11,10 +11,12 @@
 package assignment3;
 import java.util.*; 
 import java.io.*;
+import java.util.Collections;
 
 public class Main {
 	// static variables and constants only here. 
 	public static Set<String> dictionary = makeDictionary();
+	
 	public static void main(String[] args) throws Exception { 
 		Scanner kb; 								// input Scanner for commands
 	
@@ -30,7 +32,9 @@ public class Main {
 		ps = System.out; 							// default to Stdout
 	} 
 	//parse(kb);
-	getWordLadderBFS("AAHED", "AARGH");
+	ArrayList<String> x = getWordLadderBFS("MONEY", "STONE");
+	System.out.println(x);
+	printLadder(x);
 	initialize();
 	// TODO methods to read in words, output ladder
 	} 
@@ -59,9 +63,20 @@ public class Main {
 		
 		return arrayList;
 	} public static ArrayList<String> getWordLadderDFS(String start, String end){	
-		Node n = new Node();
 		ArrayList<String> list = new ArrayList<String>();
 		ArrayList<String> visited = new ArrayList<String>();
+		ArrayList<String> ladder = DFShelper(start, end, list, visited);
+		return ladder;
+	
+		// Returned list should be ordered start to end.  Include start and end.
+		// Return empty list if no ladder. 
+		// TODO some code Set<String> dict = makeDictionary(); 
+		// TODO more code
+		//return null; // replace this line later with real return
+	}
+	
+	public static ArrayList<String> DFShelper(String start, String end, ArrayList<String> list, ArrayList<String> visited) {
+		Node n = new Node();
 		ArrayList<Node> neighbor = new ArrayList<Node>();
 		if(n == null){
 			return list;		
@@ -72,48 +87,58 @@ public class Main {
 			return list;
 		}
 		else{
+			neighbor = neighbors(start);
 			for(int i = 0; i < neighbor.size(); i++){
-				list = getWordLadderDFS(neighbor.get(i).word, end);
+				list = DFShelper(neighbor.get(i).word, end, list, visited);
 				if(neighbor.equals(end)){
 					return list;
 				}
 			}
 			return list;
 		}
-	
-		// Returned list should be ordered start to end.  Include start and end.
-		// Return empty list if no ladder. 
-		// TODO some code Set<String> dict = makeDictionary(); 
-		// TODO more code
-		return null; // replace this line later with real return
 	}
 	 public static ArrayList<String> getWordLadderBFS(String start, String end) {
 		// TODO some code
-		 ArrayList<Node> queue = new ArrayList<Node>();
+		ArrayList<Node> queue = new ArrayList<Node>();
+		ArrayList<String> list = new ArrayList<String>();
 		Node n = new Node();
 		queue.add(n);
 		n.setWord(start);
-		ArrayList<String> visited = new ArrayList<String>();
+		//n.visited = true
+		ArrayList<Node> visited = new ArrayList<Node>();
 		Set<String> dict = makeDictionary();
 		// something something fill queue
 		while(!queue.isEmpty()){
 			// more somethings
 			Node temp = queue.remove(0);
 			if(temp.word.equals(end)){
-				return temp.list;
+				System.out.println("YES");
+				while(temp.parent != null){
+					list.add(temp.word);
+					temp = temp.parent;
+				}
+				Collections.reverse(list);
+				list.add(0, start);
+				return list;
 			}
-			if(temp.visited == true){
-				queue.remove(0);		//check on this(it should discard head)
-			}
+			//if(temp.visited == true){
+						//check on this(it should discard head)
+			//}
 			else{
 				temp.visited = true;
-				ArrayList<Node> neighbor = neighbors(temp.word);
+				dict.remove(temp.word);
+				visited.add(temp);
+				ArrayList<Node> neighbor = neighbors(temp.word, dict);
 				for(int i = 0; i < neighbor.size(); i++){		//for each neighbor
 					if(neighbor.get(i).visited == false){
+						neighbor.get(i).parent = temp;
 						if(temp.parent != null){
-							queue.add(temp);			// neighbor
-							temp.add();			//add the neighbor word to the list 
+							
 						}
+							queue.add(neighbor.get(i));			// neighbor
+							neighbor.get(i).add();			//add the neighbor word to the list 
+							dict.remove(neighbor.get(i).word);
+						
 					}
 				}
 			}
@@ -140,18 +165,20 @@ public class Main {
 		public static void printLadder(ArrayList<String> ladder) {
 		// TODO 
 			int length = ladder.size();
-			String first = ladder.get(0);
-			String last = ladder.get(length-1);
+			int wrung = length - 2;												//to ignore the first and last word
+			String first = ladder.get(0).toLowerCase();
+			String last = ladder.get(length-1).toLowerCase();
 			if (length == 0){
 				System.out.println("no word ladder can be found between" + first + " and " + last + ".");
 			}
-			System.out.println("a " + length + "-wrung word ladder exists between " + first + " and " + last + ".");
+			System.out.println("a " + wrung + "-wrung word ladder exists between " + first + " and " + last + ".");
 			for (int i=0; i<length; i++) {
-				System.out.println(ladder.get(i));
+				ladder.get(i).toLowerCase();
+				System.out.println(ladder.get(i).toLowerCase());
 			}
 		}
 		// Other private static methods here
-		public static ArrayList<Node> neighbors(String s){
+		public static ArrayList<Node> neighbors(String s, Set<String> dict){
 			char[] word = s.toCharArray();
 			char temp;
 			ArrayList<Node> wordNeighbors = new ArrayList<Node>();
@@ -161,9 +188,10 @@ public class Main {
 					if (word[i] != letter){
 						word[i] = letter;
 					}
+					String newWord = new String(word);
 					Node dictWord = new Node();
-					dictWord.word = s;
-					if (dictionary.contains(dictWord.word)){
+					dictWord.word = newWord;
+					if (dict.contains(dictWord.word) && (!(newWord.equals(s)))){
 						wordNeighbors.add(dictWord);
 					}
 					word[i] = temp;
