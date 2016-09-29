@@ -32,7 +32,7 @@ public class Main {
 		ps = System.out; 							// default to Stdout
 	} 
 	//parse(kb);
-	ArrayList<String> x = getWordLadderBFS("MONEY", "STONE");
+	ArrayList<String> x = getWordLadderDFS("MONEY", "CONEY");
 	System.out.println(x);
 	printLadder(x);
 	initialize();
@@ -63,9 +63,11 @@ public class Main {
 		
 		return arrayList;
 	} public static ArrayList<String> getWordLadderDFS(String start, String end){	
+		Set<String> dict = makeDictionary();
 		ArrayList<String> list = new ArrayList<String>();
-		ArrayList<String> visited = new ArrayList<String>();
-		ArrayList<String> ladder = DFShelper(start, end, list, visited);
+		ArrayList<Node> visited = new ArrayList<Node>();
+		ArrayList<String> ladder = DFShelper(start, end, list, visited, dict);
+		Collections.reverse(ladder);
 		return ladder;
 	
 		// Returned list should be ordered start to end.  Include start and end.
@@ -75,24 +77,29 @@ public class Main {
 		//return null; // replace this line later with real return
 	}
 	
-	public static ArrayList<String> DFShelper(String start, String end, ArrayList<String> list, ArrayList<String> visited) {
+	public static ArrayList<String> DFShelper(String start, String end, ArrayList<String> list, ArrayList<Node> visited, Set<String> dict) {
 		Node n = new Node();
+		n.word = start;
 		ArrayList<Node> neighbor = new ArrayList<Node>();
 		if(n == null){
 			return list;		
 		}
-		visited.add(start);
 		n.visited = true;
 		if(start.equals(end)){
+			list.add(start);
 			return list;
 		}
 		else{
-			neighbor = neighbors(start);
+			neighbor = neighbors(start, dict);
 			for(int i = 0; i < neighbor.size(); i++){
-				list = DFShelper(neighbor.get(i).word, end, list, visited);
-				if(neighbor.equals(end)){
-					return list;
+				if(neighbor.get(i).visited == false){
+					neighbor.get(i).parent = n;
+					list = DFShelper(neighbor.get(i).word, end, list, visited, dict);
+						list.add(n.word);
+						return list;
+					
 				}
+				
 			}
 			return list;
 		}
