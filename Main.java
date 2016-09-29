@@ -31,10 +31,14 @@ public class Main {
 		kb = new Scanner(System.in);   				// default from Stdin 
 		ps = System.out; 							// default to Stdout
 	} 
-	//parse(kb);
-	ArrayList<String> x = getWordLadderDFS("CONED", "LUAUS");
-	System.out.println(x);
+	initialize();
+	ArrayList<String> input = parse(kb);
+	String starting = input.get(0);
+	String ending = input.get(1);
+	ArrayList<String> x = getWordLadderBFS(starting, ending);
+	ArrayList<String> y = getWordLadderDFS(starting, ending);
 	printLadder(x);
+	printLadder(y);
 	initialize();
 	// TODO methods to read in words, output ladder
 	} 
@@ -63,6 +67,7 @@ public class Main {
 		
 		return arrayList;
 	} public static ArrayList<String> getWordLadderDFS(String start, String end){	
+		int counter = 0;
 		Set<String> dict = makeDictionary();
 		Set<String> altDict = dict;
 		ArrayList<String> list = new ArrayList<String>();
@@ -71,7 +76,24 @@ public class Main {
 		//ArrayList<String> ladder = DFShelper(start, end, list, visited, dict, altDict);
 		if(exist){
 			Collections.reverse(list);
-			return list;
+			if(list.size() > 2){
+				for(int i = 0; i < list.size() -2; i++){
+					for(int j = i+2; j< list.size(); j++){
+						if(optimizing(list.get(i), list.get(j)) == true){
+							counter = j-i-1;
+							int something = i+1;
+							while(counter != 0){
+								list.remove(something);
+								counter--;
+							}
+						}
+					}
+			}
+				return list;
+			}
+			else{
+				return list;
+			}
 		}
 		else{
 			return list;
@@ -130,7 +152,6 @@ public class Main {
 			// more somethings
 			Node temp = queue.remove(0);
 			if(temp.word.equals(end)){
-				System.out.println("YES");
 				while(temp.parent != null){
 					list.add(temp.word);
 					temp = temp.parent;
@@ -217,5 +238,20 @@ public class Main {
 			}
 			return wordNeighbors;
 		}
+		public static boolean optimizing(String x, String y){
+			int counter = 0;
+			for(int i = 0; i < x.length(); i++){
+				if(x.charAt(i) != y.charAt(i)){
+					counter++;
+				}
+			}
+			if(counter == 1){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
 }
+
 
