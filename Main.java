@@ -32,7 +32,7 @@ public class Main {
 		ps = System.out; 							// default to Stdout
 	} 
 	//parse(kb);
-	ArrayList<String> x = getWordLadderDFS("MONEY", "CONEY");
+	ArrayList<String> x = getWordLadderDFS("CONED", "LUAUS");
 	System.out.println(x);
 	printLadder(x);
 	initialize();
@@ -64,11 +64,18 @@ public class Main {
 		return arrayList;
 	} public static ArrayList<String> getWordLadderDFS(String start, String end){	
 		Set<String> dict = makeDictionary();
+		Set<String> altDict = dict;
 		ArrayList<String> list = new ArrayList<String>();
-		ArrayList<Node> visited = new ArrayList<Node>();
-		ArrayList<String> ladder = DFShelper(start, end, list, visited, dict);
-		Collections.reverse(ladder);
-		return ladder;
+		ArrayList<String> visited = new ArrayList<String>();
+		boolean exist = DFShelper(start, end, list, visited, dict, altDict);
+		//ArrayList<String> ladder = DFShelper(start, end, list, visited, dict, altDict);
+		if(exist){
+			Collections.reverse(list);
+			return list;
+		}
+		else{
+			return list;
+		}
 	
 		// Returned list should be ordered start to end.  Include start and end.
 		// Return empty list if no ladder. 
@@ -77,31 +84,35 @@ public class Main {
 		//return null; // replace this line later with real return
 	}
 	
-	public static ArrayList<String> DFShelper(String start, String end, ArrayList<String> list, ArrayList<Node> visited, Set<String> dict) {
+	public static boolean DFShelper(String start, String end, ArrayList<String> list, ArrayList<String> visited, Set<String> dict, Set<String> altDict) {
+		
 		Node n = new Node();
 		n.word = start;
 		ArrayList<Node> neighbor = new ArrayList<Node>();
 		if(n == null){
-			return list;		
+			return false;		
 		}
 		n.visited = true;
+		visited.add(start);
+		//altDict.remove(n.word);
 		if(start.equals(end)){
 			list.add(start);
-			return list;
+			return true;
 		}
 		else{
-			neighbor = neighbors(start, dict);
+			neighbor = neighbors(start, altDict);
 			for(int i = 0; i < neighbor.size(); i++){
-				if(neighbor.get(i).visited == false){
+				if(!(visited.contains(neighbor.get(i).word))){
 					neighbor.get(i).parent = n;
-					list = DFShelper(neighbor.get(i).word, end, list, visited, dict);
-						list.add(n.word);
-						return list;
-					
+					boolean found = DFShelper(neighbor.get(i).word, end, list, visited, dict, altDict);
+						if(found){
+							list.add(n.word);
+							return true;
+						}
 				}
 				
 			}
-			return list;
+			return false;
 		}
 	}
 	 public static ArrayList<String> getWordLadderBFS(String start, String end) {
